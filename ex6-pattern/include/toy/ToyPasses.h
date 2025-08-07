@@ -10,10 +10,11 @@ namespace toy {
 #define GEN_PASS_DECL
 #include "toy/ToyPasses.h.inc"
 
-std::unique_ptr<mlir::Pass> createConvertToyToArithPass(ConvertToyToArithOptions options={});
+std::unique_ptr<mlir::Pass>
+createConvertToyToArithPass(ConvertToyToArithOptions options = {});
 std::unique_ptr<mlir::Pass> createDCEPass();
 
 #define GEN_PASS_REGISTRATION
 #include "toy/ToyPasses.h.inc"
 
-}
+} // namespace toy

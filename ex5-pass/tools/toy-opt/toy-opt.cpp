@@ -10,7 +10,7 @@
 using namespace mlir;
 using namespace llvm;
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
   DialectRegistry registry;
   // 注册 Dialect
   registry.insert<toy::ToyDialect, func::FuncDialect>();

@@ -9,12 +9,17 @@
 using namespace mlir;
 using namespace llvm;
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
+  /// Dialect注册器
   DialectRegistry registry;
-  // 注册 Dialect
+
+  /// 注册 Dialect(ToyDialect 和 FuncDialect)
   registry.insert<toy::ToyDialect, func::FuncDialect>();
-  // 注册两个 Pass
+
+  /// 注册两个 Pass
   registerCSEPass();
   registerCanonicalizerPass();
+
+  /// MlirOptMain
   return asMainReturnCode(MlirOptMain(argc, argv, "toy-opt", registry));
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "toy/ToyDialect.h"
 #include "mlir/IR/BuiltinTypes.h"
 #include "mlir/IR/Types.h"
+#include "toy/ToyDialect.h"
 
 #include "llvm/Support/MathExtras.h"
 

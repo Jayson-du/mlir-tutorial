@@ -8,8 +8,8 @@
 #include "mlir/Parser/Parser.h"
 #include "mlir/Support/FileUtilities.h"
 
-#include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
+#include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/raw_ostream.h"
 
@@ -18,7 +18,7 @@
 using namespace mlir;
 using namespace llvm;
 
-int main(int argc, char ** argv) {
+int main(int argc, char **argv) {
   MLIRContext ctx;
 
   ctx.loadDialect<func::FuncDialect, arith::ArithDialect>();
@@ -32,8 +32,10 @@ int main(int argc, char ** argv) {
 
   // 创建 func
   auto i32 = builder.getI32Type();
-  auto funcType = builder.getFunctionType({i32, i32}, {i32});
-  auto func = builder.create<func::FuncOp>(builder.getUnknownLoc(), "test", funcType);
+  auto f64 = builder.getF64Type();
+  auto funcType = builder.getFunctionType({i32, i32, f64, f64}, {i32});
+  auto func =
+      builder.create<func::FuncOp>(builder.getUnknownLoc(), "test", funcType);
 
   // 添加基本块
   auto entry = func.addEntryBlock();
@@ -43,7 +45,14 @@ int main(int argc, char ** argv) {
   builder.setInsertionPointToEnd(entry);
 
   // 创建 arith.addi
-  auto addi = builder.create<arith::AddIOp>(builder.getUnknownLoc(), args[0], args[1]);
+  auto addi =
+      builder.create<arith::AddIOp>(builder.getUnknownLoc(), args[0], args[1]);
+
+  auto subi =
+      builder.create<arith::SubFOp>(builder.getUnknownLoc(), args[2], args[3]);
+
+  auto mul =
+      builder.create<arith::MulFOp>(builder.getUnknownLoc(), addi, args[2]);
 
   // 创建 func.return
   builder.create<func::ReturnOp>(builder.getUnknownLoc(), ValueRange({addi}));

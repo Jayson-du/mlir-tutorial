@@ -4,29 +4,37 @@
 #define GEN_PASS_DEF_DCE
 #include "toy/ToyPasses.h"
 
+MLIR_DEFINE_EXPLICIT_TYPE_ID(::toy::ReturnOp)
+MLIR_DEFINE_EXPLICIT_TYPE_ID(::toy::FuncOp)
+MLIR_DEFINE_EXPLICIT_TYPE_ID(::toy::AddOp)
+MLIR_DEFINE_EXPLICIT_TYPE_ID(::toy::SubOp)
+MLIR_DEFINE_EXPLICIT_TYPE_ID(::toy::ConstantOp)
+MLIR_DEFINE_EXPLICIT_TYPE_ID(::toy::CallOp)
+
 using namespace mlir;
 using namespace llvm;
 using namespace toy;
 
 struct DCEPass : toy::impl::DCEBase<DCEPass> {
-  void visitAll(llvm::DenseSet<Operation*> &visited, Operation * op) {
-    if(visited.contains(op)) return;
+  void visitAll(llvm::DenseSet<Operation *> &visited, Operation *op) {
+    if (visited.contains(op))
+      return;
     visited.insert(op);
-    for(auto operand: op->getOperands()) 
-      if(auto def = operand.getDefiningOp()) 
+    for (auto operand : op->getOperands())
+      if (auto def = operand.getDefiningOp())
         visitAll(visited, def);
   }
   void runOnOperation() final {
-    llvm::DenseSet<Operation*> visited;
-    getOperation()->walk([&](toy::ReturnOp op) {
-      visitAll(visited, op);
+    llvm::DenseSet<Operation *> visited;
+    getOperation()->walk([&](toy::ReturnOp op) { visitAll(visited, op); });
+    llvm::SmallVector<Operation *> opToRemove;
+    getOperation().walk([&](Operation *op) {
+      if (op == getOperation())
+        return;
+      if (!visited.contains(op))
+        opToRemove.push_back(op);
     });
-    llvm::SmallVector<Operation*> opToRemove;
-    getOperation().walk([&](Operation * op) {
-      if(op == getOperation()) return;
-      if(!visited.contains(op)) opToRemove.push_back(op);
-    });
-    for(auto v: reverse(opToRemove)) {
+    for (auto v : reverse(opToRemove)) {
       v->erase();
     }
   }

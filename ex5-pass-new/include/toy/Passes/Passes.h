@@ -1,8 +1,8 @@
 #ifndef TOY_PASSES_H
 #define TOY_PASSES_H
 
-#include "mlir/Pass/Pass.h"
 #include "mlir/IR/BuiltinOps.h"
+#include "mlir/Pass/Pass.h"
 #include <memory>
 
 namespace mlir {

@@ -14,9 +14,8 @@ namespace {
 struct ToyLoopUnroll : public toy::ToyLoopUnrollBase<ToyLoopUnroll> {
   void runOnOperation() override {
     auto moduleOp = getOperation();
-    moduleOp.walk([&](affine::AffineForOp op) {
-      (void)loopUnrollJamByFactor(op, 4);
-    });
+    moduleOp.walk(
+        [&](affine::AffineForOp op) { (void)loopUnrollJamByFactor(op, 4); });
   }
 };
 

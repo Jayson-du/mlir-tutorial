@@ -12,5 +12,5 @@ void ToyDialect::initialize() {
   addOperations<
 #define GET_OP_LIST
 #include "toy/Toy.cpp.inc"
-  >();
+      >();
 }

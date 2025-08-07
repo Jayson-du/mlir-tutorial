@@ -5,3 +5,22 @@ add_mlir_library(
   DEPENDS
   MLIRToyTransformsIncGen
 )
+
+target_link_libraries(ToyTransforms
+PRIVATE
+    MLIRAnalysis
+    MLIRBuiltinToLLVMIRTranslation
+    MLIRCallInterfaces
+    MLIRCastInterfaces
+    MLIRExecutionEngine
+    MLIRFunctionInterfaces
+    MLIRIR
+    MLIRLLVMCommonConversion
+    MLIRLLVMToLLVMIRTranslation
+    MLIRMemRefDialect
+    MLIRParser
+    MLIRPass
+    MLIRSideEffectInterfaces
+    MLIRTargetLLVMIRExport
+    MLIRTransforms
+    )

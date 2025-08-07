@@ -5,4 +5,11 @@ set(LLVM_TARGET_DEFINITIONS ToyPasses.td)
 mlir_tablegen(ToyPasses.h.inc -gen-pass-decls)
 add_public_tablegen_target(MLIRToyTransformsIncGen)
 
-add_custom_target(header DEPENDS MLIRToyIncGen MLIRToyTransformsIncGen)
+add_custom_target(header DEPENDS MLIRToyIncGen MLIRToyTransformsIncGen MLIRAnalysis
+    MLIRFunctionInterfaces
+    MLIRIR
+    MLIRParser
+    MLIRSideEffectInterfaces
+    MLIRTransforms
+    MLIRSupport
+    MLIRPass)
