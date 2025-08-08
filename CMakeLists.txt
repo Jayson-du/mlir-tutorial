@@ -23,6 +23,8 @@ include(AddLLVM)
 include(AddMLIR)
 include(HandleLLVMOptions)
 
+message("***** LLVM_INCLUDE_DIRS is ${LLVM_INCLUDE_DIRS} ## MLIR_INCLUDE_DIRS is ${MLIR_INCLUDE_DIRS} *****")
+
 include_directories(${LLVM_INCLUDE_DIRS} ${MLIR_INCLUDE_DIRS})
 
 # add_subdirectory(ex1-io)

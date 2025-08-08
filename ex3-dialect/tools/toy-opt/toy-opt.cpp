@@ -6,6 +6,8 @@
 #include "mlir/Transforms/Passes.h"
 // 导入我们新建的 Dialect
 #include "toy/ToyDialect.h"
+
+#include "jayson/JaysonDialect.h"
 using namespace mlir;
 using namespace llvm;
 
@@ -14,7 +16,8 @@ int main(int argc, char **argv) {
   DialectRegistry registry;
 
   /// 注册 Dialect(ToyDialect 和 FuncDialect)
-  registry.insert<toy::ToyDialect, func::FuncDialect>();
+  // registry.insert<toy::ToyDialect, func::FuncDialect>();
+  registry.insert<toy::ToyDialect, linus::JaysonDialect, func::FuncDialect>();
 
   /// 注册两个 Pass
   registerCSEPass();
