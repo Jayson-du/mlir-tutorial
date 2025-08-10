@@ -221,8 +221,8 @@ MLIR 也有缺点：
 
 MLIR 是 树形结构，每个节点是 Operation，Op 可以组成 Block，Block 组成 Region，而 Region 又可以嵌套在 Op 内部。
 
-* **Operation** 指单个运算，运算内可以嵌套 **Region**
-* **Block** 指基本块，基本块包含一个或多个 **Operation**
+* **Operation** 指单个运算，运算内可以嵌套 **Region**[^1]
+* **Block** 指基本块，基本块包含一个或多个 **Operation**[^2]
 * **Region** 指区域，类似于循环体或函数体，包含若干 **Block**
 
 MLIR 的基本块使用 **“基本块参数”** 来取代“phi函数”，如下面的例子：
@@ -244,7 +244,7 @@ func.func @foo(%a: i32, %b: i32, %c: i32) -> i32 {
 }
 ```
 
-**module**: 默认情况下，mlir 最外层是 `builtin.module`，作为 IR 的根。
+**module**: <font color=red>默认情况下，mlir 最外层是 `builtin.module`，作为 IR 的根。</font>
 
 ###  2.2. <a name='mlir-基本工程模板'></a>MLIR 基本工程模板
 
@@ -252,9 +252,9 @@ func.func @foo(%a: i32, %b: i32, %c: i32) -> i32 {
 
 ```
 mlir-tutorial
-├── install       # Install Prefix，把 MLIR 编译后安装到这里
-├── llvm-project  # MLIR 项目
-└── mlir-toy      # 自己的 MLIR 工程
+  ├── install       # Install Prefix，把 MLIR 编译后安装到这里
+  ├── llvm-project  # MLIR 项目
+  └── mlir-toy      # 自己的 MLIR 工程
 ```
 
 首先，按照 MLIR [getting started](https://mlir.llvm.org/getting_started/) 的方法，安装 MLIR。注意，安装的时候要设置 PREFIX 为 install 目录，如下面所示，和 getting start 上的略有区别：
@@ -283,19 +283,19 @@ ninja install
 
 ```bash
 install
-├── bin
-├── examples
-├── include
-├── lib
-└── share
+  ├── bin
+  ├── examples
+  ├── include
+  ├── lib
+  └── share
 ```
 
 接下来，在 mlir-toy 里面建立一个简单的工程
 
 ```bash
 mlir-toy
-├── CMakeLists.txt
-└── main.cpp
+  ├── CMakeLists.txt
+  └── main.cpp
 ```
 
 其中 CMakeLists.txt 文件写法比较固定：
@@ -489,21 +489,21 @@ func.func @test(%a: i32, %b: i32) -> i32 {
 ```
 
 * `mlir-opt --mlir-print-op-generic` 来打印这里的代码，得到下面的代码。参数名被隐去，只有 function_type 作为 attribute 保留了下来。
-    ```mlir
-    "builtin.module"() ({
-      "func.func"() <{function_type = (i32, i32) -> i32, sym_name = "test"}> ({
-      ^bb0(%arg0: i32, %arg1: i32):
-        %0 = "arith.addi"(%arg0, %arg1) : (i32, i32) -> i32
-        "func.return"(%0) : (i32) -> ()
-      }) : () -> ()
-    }) : () -> ()
-    ```
+```mlir
+"builtin.module"() ({
+  "func.func"() <{function_type = (i32, i32) -> i32, sym_name = "test"}> ({
+  ^bb0(%arg0: i32, %arg1: i32):
+    %0 = "arith.addi"(%arg0, %arg1) : (i32, i32) -> i32
+    "func.return"(%0) : (i32) -> ()
+  }) : () -> ()
+}) : () -> ()
+```
 
 ##  4. <a name='mlir-的类型转换'></a>MLIR 的类型转换
 
 ###  4.1. <a name='op-的类型转换'></a>Op 的类型转换
 
-MLIR 的所有 Op 都有一个统一的储存格式，叫 `Operation`。`Operation` 里面存了 OpName 和所有的 operands, results, attributes 和其它的东西。
+<b>MLIR 的所有 Op 都有一个统一的储存格式，叫 `Operation`。`Operation` 里面存了 OpName 和所有的 operands, results, attributes 和其它的东西。</b>
 
 用户定义的 `arith.addi` 等等 Op，本质上都是 `Operation` 的指针。但与 `Operation*` 不同的是，`AddIOp` 定义了 `Operation` 里储存的数据的解释方式。如 AddOp，自己是一个 `Operation` 的指针，也定义了一个函数 `getLhs` 用来返回第一个值，当作 lhs。
 
@@ -520,7 +520,7 @@ void myCast(Operation * op) {
 }
 ```
 
-**相等关系**：两个 Operation* 相等，指的是它们指向同一个 Operation 实例，而不是这个 Operation 的 operand,result,attr 相等。
+**相等关系**：两个 Operation* 相等，指的是它们指向同一个 Operation 实例，而不是这个 Operation 的 operand,result,attr 相等。[^3]
 
 **Hashing**：在不修改 IR 的情况下，每个 `Operation` 有唯一地址。于是，可以直接用 `Operation*` 当作值建立哈系表，用来统计 IR 中数据或做分析：
 
@@ -644,7 +644,7 @@ for(auto & uses: value.getUses()) {
       // do something
     })
     ```
-    
+
 * **block**：直接就是一个 iterator，可以直接遍历：
 
     ```cpp
@@ -821,7 +821,7 @@ vscode 提供 mlir 扩展，可以为我们写 tablegen 文件提供帮助。在
 ####  6.3.4. <a name='程序入口'></a>程序入口
 
 10. `tools/toy-opt/toy-opt.cpp`：mlir 提供了一个可复用的通用的程序入口，我们可以在 `MlirOptMain` 前面注册我们想要的 Dialect 和 Pass，接下来调用 `MlirOptMain`，就可以使用一些默认提供的功能。
-    
+
     ```cpp
     #include "mlir/IR/DialectRegistry.h"
     #include "mlir/Tools/mlir-opt/MlirOptMain.h"
@@ -927,7 +927,7 @@ using namespace mlir;
 LogicalResult SubOp::verify() {
   if (getLhs().getType() != getRhs().getType())
     return this->emitError() << "Lhs Type " << getLhs().getType()
-      << " not equal to rhs " << getRhs().getType(); 
+      << " not equal to rhs " << getRhs().getType();
   return success();
 }
 ```
@@ -1224,7 +1224,7 @@ def FuncOp : ToyOp<"func", [
     // Method of FunctionOpInterface
     mlir::Region * getCallableRegion() {return &getBody();}
     // getFunctionType 函数会自动生成
-    // mlir::FunctionType getFunctionType(); 
+    // mlir::FunctionType getFunctionType();
 
     // Method of CallableOpInterface
     llvm::ArrayRef<mlir::Type> getArgumentTypes() {return getFunctionType().getInputs();}
@@ -1247,8 +1247,8 @@ ParseResult FuncOp::parse(OpAsmParser &parser, OperationState &result) {
     return builder.getFunctionType(argTypes, results);
   };
   return function_interface_impl::parseFunctionOp(
-    parser, result, false, 
-    getFunctionTypeAttrName(result.name), buildFuncType, 
+    parser, result, false,
+    getFunctionTypeAttrName(result.name), buildFuncType,
     getArgAttrsAttrName(result.name), getResAttrsAttrName(result.name)
   );
 }
@@ -1337,7 +1337,7 @@ def CallOp : ToyOp<"call", [CallOpInterface]> {
     #include "toy/ToyPasses.h"
     #include "llvm/Support/raw_ostream.h"
 
-    struct ConvertToyToArithPass : 
+    struct ConvertToyToArithPass :
         toy::impl::ConvertToyToArithBase<ConvertToyToArithPass>
     {
       // 使用父类的构造函数
@@ -1406,7 +1406,7 @@ std::unique_ptr<mlir::Pass> createConvertToyToArithPass(
 
 在实现 create 函数的时候，也要带上参数：
 ```cpp
-struct ConvertToyToArithPass : 
+struct ConvertToyToArithPass :
     toy::impl::ConvertToyToArithBase<ConvertToyToArithPass>
 {
   // 使用父类的构造函数
@@ -1444,8 +1444,8 @@ struct DCEPass : toy::impl::DCEBase<DCEPass> {
   void visitAll(llvm::DenseSet<Operation*> &visited, Operation * op) {
     if(visited.contains(op)) return;
     visited.insert(op);
-    for(auto operand: op->getOperands()) 
-      if(auto def = operand.getDefiningOp()) 
+    for(auto operand: op->getOperands())
+      if(auto def = operand.getDefiningOp())
         visitAll(visited, def);
   }
   void runOnOperation() final {
@@ -1675,7 +1675,7 @@ converter.addTargetMaterialization([](OpBuilder& builder, Type /* 对所有 Sour
 
 ```c++
 // target.addDynamicallyLegalOp<FuncOp>([](FuncOp f) {
-//   return llvm::all_of(f.getArgumentTypes(), 
+//   return llvm::all_of(f.getArgumentTypes(),
 //      [](Type t) {return !isa<ToyIntegerType>(t);});
 // });
 ```
@@ -1829,3 +1829,9 @@ mlir 创新地把 Op 同构地看作 operand, attribute, result 的集合，具�
 ##  13. <a name='issue-&-reply'></a>Issue & Reply
 
 本文档仅作教学，本人不负责解决使用 mlir 中遇到的任何问题。作为一个要使用 mlir 的人，应该做好遭遇玄学 bug 的觉悟。
+
+
+
+[^1]: Operation与Op有什么区别?
+[^2]: Region在代码中如何添加, Region与Block的区别?
+[^3]: 那么operand,result,attr 是否相等?

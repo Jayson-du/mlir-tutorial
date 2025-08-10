@@ -1,3 +1,3 @@
-# 第一个参数是: td文件(JaysonToy.td)
-# 第二个参数是: 文件路径${workspacefolder}/ex3-dialect/include/jayson/*
+# 第一个参数是: Dialect的名称`JaysonToyDialect`
+# 第二个参数是: 文件名${workspacefolder}/ex3-dialect/include/jayson/JaysonToy.td
 add_mlir_dialect(JaysonToy jayson)
