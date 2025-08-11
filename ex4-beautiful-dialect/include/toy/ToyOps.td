@@ -79,13 +79,19 @@ def FuncOp : ToyOp<"func", [
     OptionalAttr<DictArrayAttr>:$arg_attrs,
     OptionalAttr<DictArrayAttr>:$res_attrs
   );
+
+  // op的region列表, 默认是region 0,
+  // arg1: region是默认参数
+  // arg2: AnyRegion 是一个Region的实例, 表示任意Region,
+  // 生成函数::mlir::Region &getBody() { return &getRegion(0); }
+  // 还有 SizedRegion<int numBlocks>, MinSizedRegion<int numBlocks> ...
   dag regions = (region AnyRegion:$body);
   let hasCustomAssemblyFormat = true;
   let extraClassDeclaration = [{
     // Method of FunctionOpInterface
     mlir::Region * getCallableRegion() {return &getBody();}
     // getFunctionType 函数会自动生成
-    // mlir::FunctionType getFunctionType(); 
+    // mlir::FunctionType getFunctionType();
 
     // Method of CallableOpInterface
     llvm::ArrayRef<mlir::Type> getArgumentTypes() {return getFunctionType().getInputs();}
