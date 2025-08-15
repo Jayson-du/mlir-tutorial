@@ -67,6 +67,21 @@ def ReturnOp : ToyOp<"ret", [Terminator, ReturnLike]> {
 }
 
 def FuncOp : ToyOp<"func", [
+  // 限制这个 Operation 内部的 Region 不能隐式访问外部定义的 SSA 值
+  /*
+  在 MLIR 中，Region 里的 Operation 默认是可以捕获外部的 SSA 值的
+  ```
+  func.func @foo(%x: i32) {
+    my.region_op {
+      %y = addi %x, %x : i32  // 默认是可以直接用外面的 %x
+    }
+  }
+  ```
+
+  如果一个 Op 有 IsolatedFromAbove Trait，这种捕获行为会被禁止, 该 Region 内部引用的值，必须要么
+  1. 是 Region 参数（block argument）
+  2. 在该 Region 内部定义
+   */
   IsolatedFromAbove,
   FunctionOpInterface,
   /* Symbol, */ /* Symbol 会自动被 FunctionOpInterface 加上 */
@@ -86,7 +101,7 @@ def FuncOp : ToyOp<"func", [
     // Method of FunctionOpInterface
     mlir::Region * getCallableRegion() {return &getBody();}
     // getFunctionType 函数会自动生成
-    // mlir::FunctionType getFunctionType(); 
+    // mlir::FunctionType getFunctionType();
 
     // Method of CallableOpInterface
     llvm::ArrayRef<mlir::Type> getArgumentTypes() {return getFunctionType().getInputs();}
