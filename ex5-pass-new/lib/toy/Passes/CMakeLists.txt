@@ -6,7 +6,7 @@ add_mlir_dialect_library(MLIRToyTransforms
   ${MLIR_MAIN_INCLUDE_DIR}/mlir/Dialect/Affine
 
   DEPENDS
-  MLIRToyPassIncGen
+  MLIRToyPassIncGen_5_1
 
   LINK_LIBS PUBLIC
   MLIRAffineDialect

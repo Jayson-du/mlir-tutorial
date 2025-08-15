@@ -3,6 +3,7 @@ add_mlir_library(
   ConvertToyToArith.cpp
   DCE.cpp
   DEPENDS
+  # 依赖TableGen生成的文件
   MLIRToyTransformsIncGen
 )
 

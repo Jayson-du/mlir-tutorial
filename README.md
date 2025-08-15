@@ -1372,7 +1372,7 @@ def CallOp : ToyOp<"call", [CallOpInterface]> {
 
 它们两个的区别是，Pass 里面 `getOperation()` 返回的是 Operation 还是 Interface。
 
-默认情况下，`Pass<"convert-toy-to-arith">` 定义了一个在任意 `Operation*` 上都能运行的 Pass，如果要定义在指定 Operation 上运行的 Pass，可以使用下面的定义。注意，此时使用了`toy::FuncOp`，在 `ToyPasses.h` 文件里需要 include 对应的头文件，防止找不到名字。
+默认情况下，`Pass<"convert-toy-to-arith">` 定义了一个在任意 `Operation*` 上都能运行的 Pass，如果要定义在指定 Operation 上运行的 Pass，可以使用下面的定义。<b><font color=red>注意，此时使用了`toy::FuncOp`，在 `ToyPasses.h` 文件里需要 include 对应的头文件，防止找不到名字。</font></b>
 
 ```tablegen
 def ConvertToyToArith : Pass<"convert-toy-to-arith", "toy::FuncOp"> {
